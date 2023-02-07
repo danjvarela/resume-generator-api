@@ -24,6 +24,9 @@ group :development, :test do
 
   # Testing
   gem 'rspec-rails', '~> 6.0.0'
+
+  # Formatter
+  gem "standard" 
 end
 
 group :development do
