@@ -24,6 +24,7 @@ group :development, :test do
 
   # Testing
   gem "rspec-rails", "~> 6.0.0"
+  gem "factory_bot_rails"
 
   # Formatter
   gem "standard"
@@ -37,4 +38,8 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   gem "spring"
   gem "spring-commands-rspec"
+end
+
+group :test do
+  gem "database_cleaner-active_record"
 end
