@@ -141,6 +141,7 @@ GEM
     rake (13.0.6)
     reline (0.3.2)
       io-console (~> 0.5)
+    spring (4.1.1)
     thor (1.2.1)
     timeout (0.3.1)
     tzinfo (2.0.6)
@@ -158,6 +159,7 @@ DEPENDENCIES
   pg
   puma (~> 5.0)
   rails (~> 7.0.4, >= 7.0.4.2)
+  spring
   tzinfo-data
 
 RUBY VERSION
