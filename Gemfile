@@ -30,6 +30,9 @@ group :development, :test do
   gem "rspec-rails", "~> 6.0.0"
   gem "factory_bot_rails"
 
+  # Generate fake data
+  gem "faker"
+
   # Formatter
   gem "standard"
 
@@ -46,4 +49,6 @@ end
 
 group :test do
   gem "database_cleaner-active_record"
+  # Convenient rspec matchers
+  gem "shoulda-matchers", "~> 5.0"
 end
