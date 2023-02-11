@@ -9,6 +9,7 @@ require "rspec/rails"
 require "support/factory_bot"
 require "support/database_cleaner"
 require "support/shoulda_matchers"
+require "support/response_helpers"
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -63,4 +64,5 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+  config.include ResponseHelpers, type: :request
 end
