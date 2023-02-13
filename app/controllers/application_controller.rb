@@ -8,6 +8,10 @@ class ApplicationController < ActionController::API
     render options.merge(json: {errors: errors})
   end
 
+  def render_success(resource)
+    render json: resource, root: "data"
+  end
+
   def resource_not_found
     render json: {errors: {full_messages: ["#{controller_name.singularize.capitalize} with id=#{params[:id]} can't be found"]}}, status: 404
   end
