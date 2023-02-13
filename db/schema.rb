@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_08_134633) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_13_111129) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,6 +32,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_08_134633) do
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_jobs_on_company_id"
     t.index ["user_id"], name: "index_jobs_on_user_id"
+  end
+
+  create_table "skills", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "user_skills", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "skill_id", null: false
+    t.float "years_of_experience"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["skill_id"], name: "index_user_skills_on_skill_id"
+    t.index ["user_id"], name: "index_user_skills_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -61,4 +77,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_08_134633) do
 
   add_foreign_key "jobs", "companies"
   add_foreign_key "jobs", "users"
+  add_foreign_key "user_skills", "skills"
+  add_foreign_key "user_skills", "users"
 end
