@@ -3,34 +3,33 @@ class JobsController < ApplicationController
   before_action :set_job, only: [:show, :update, :destroy]
 
   def index
-    render json: current_user.jobs, root: "data"
+    render_success(current_user.jobs)
   end
 
   def show
-    render json: @job, root: "data"
+    render_success(@job)
   end
 
   def create
-    @job = Job.create job_params
+    job = Job.create job_params
 
-    if @job.persisted?
-      render json: @job, root: "data"
+    if job.persisted?
+      render_success(job)
     else
-      render_errors @job, root: "errors"
+      render_errors(job)
     end
   end
 
   def update
     if @job.update job_params
-      render json: @job, root: "data"
+      render_success(@job)
     else
-      render_errors @job
+      render_errors(@job)
     end
   end
 
   def destroy
-    @job.destroy
-    render json: @job, root: "data"
+    render_success(@job.destroy)
   end
 
   private
