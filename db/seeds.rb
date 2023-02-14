@@ -12,3 +12,7 @@ user.confirm
 3.times do
   FactoryBot.create :job, user: user
 end
+
+3.times do
+  FactoryBot.create :resume, user: user
+end
