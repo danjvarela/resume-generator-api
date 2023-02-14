@@ -21,7 +21,7 @@ class ResumesController < ApplicationController
   end
 
   def update
-    if @resume.update( resume_params )
+    if @resume.update(resume_params)
       render json: @resume, root: "data"
     else
       render_errors @resume
@@ -35,11 +35,10 @@ class ResumesController < ApplicationController
   private
 
   def set_resume
-    @resume = Resume.find( params[:id] )
+    @resume = Resume.find(params[:id])
   end
 
   def resume_params
     params.require(:resume).permit(:title, :headline, :summary).merge({user_id: current_user.id})
   end
-
 end
