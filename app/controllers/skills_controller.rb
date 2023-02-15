@@ -1,4 +1,6 @@
 class SkillsController < ApplicationController
+  include RansackableController
+  
   before_action :authenticate_user!
 
   def index
@@ -6,6 +8,6 @@ class SkillsController < ApplicationController
   end
 
   def search
-    render_success Skill.ransack(params[:q]).result(distinct: true)
+    render_success ransack
   end
 end

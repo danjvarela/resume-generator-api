@@ -1,5 +1,5 @@
 class CompaniesController < ApplicationController
-  include Ransackable
+  include RansackableController
   before_action :authenticate_user!
 
   def index
@@ -17,7 +17,7 @@ class CompaniesController < ApplicationController
   end
 
   def search
-    render_success ransack(Company, params)
+    render_success ransack
   end
 
   private
