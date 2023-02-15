@@ -1,35 +1,34 @@
 require "rails_helper"
 require "contexts/authenticate_user"
+require "examples/response_examples"
 
 RSpec.describe "Skills", type: :request do
   include_context "sign in user"
 
-  before :all do
-    3.times { create :skill }
-    @all_skills_response = format_to_response Skill.all
-  end
-
   describe "GET /index" do
-    it "should return status 200" do
+    before :all do
+      3.times { create :skill }
       get skills_path, **@auth_headers
-      expect(status).to eq 200
     end
 
+    include_examples "response status", 200
+
     it "should return all skills" do
-      get skills_path, **@auth_headers
-      expect(json_body).to eq @all_skills_response
+      expect(json_body).to eq format_to_response(Skill.all)
     end
   end
 
   describe "GET /search" do
-    it "should return status 200" do
-      get skill_search_path, params: {q: {name_cont: "co"}}, **@auth_headers
-      expect(status).to eq 200
+    before :all do
+      3.times { create :skill }
+      @search_params = {name_cont: "co"}
+      get skills_search_path, params: {q: @search_params}, **@auth_headers
     end
 
+    include_examples "response status", 200
+
     it "should return filtered skills" do
-      get skill_search_path, params: {q: {name_cont: "co"}}, **@auth_headers
-      expect(json_body).to eq format_to_response(Skill.ransack(name_cont: "co").result)
+      expect(json_body).to eq format_to_response(Skill.ransack(@search_params).result(distinct: true))
     end
   end
 end
