@@ -1,89 +1,85 @@
 require "rails_helper"
 require "contexts/authenticate_user"
 require "examples/response_examples"
-require "examples/resume_examples"
 
 RSpec.describe "Resumes", type: :request do
   include_context "sign in user"
 
-  before :all do
-    @resume = create :resume, user: @user
-  end
-
   describe "GET /index" do
-    before(:all) { get resumes_path, headers: @auth_headers }
-    include_examples "response status", 200
-
-    it "returns an array" do
-      expect(json_body["data"]).to be_an_instance_of(Array)
+    before(:all) do
+      create :resume, user: @user
+      get resumes_path, **@auth_headers
     end
 
-    context "each element of the array" do
-      it_behaves_like("a resume") { let(:resume) { json_body["data"][0] } }
+    include_examples "response status", 200
+
+    it "returns the list of all user resumes" do
+      expect(json_body).to eq format_to_response(@user.resumes)
     end
   end
 
   describe "GET /show" do
-    before(:all) { get resume_path(@resume), headers: @auth_headers }
+    before(:all) do
+      @resume = create :resume, user: @user
+      get resume_path(@resume), **@auth_headers
+    end
+
     include_examples "response status", 200
-    context "response body" do
-      it_behaves_like("a resume") { let(:resume) { json_body["data"] } }
+
+    it "should return the resume" do
+      expect(json_body).to eq format_to_response(@resume)
     end
   end
 
   describe "POST /create" do
     context "with valid params" do
       before(:all) do
-        post resumes_path, params: {resume: build(:resume).attributes}, headers: @auth_headers
+        @original_resume_count = Resume.count
+        post resumes_path, params: {resume: build(:resume).attributes}, **@auth_headers
       end
+
       include_examples "response status", 200
 
-      context "response body" do
-        it_behaves_like("a resume") { let(:resume) { json_body["data"] } }
+      it "should return the created resume" do
+        expect(json_body).to eq format_to_response(Resume.last)
       end
 
-      it "creates a new resume" do
-        expect {
-          post resumes_path, params: {resume: build(:resume).attributes}, headers: @auth_headers
-        }.to change { Resume.count }.by(1)
+      it "should create a new resume" do
+        expect(Resume.count).to eq @original_resume_count + 1
       end
     end
 
     context "with invalid params" do
       before(:all) do
-        post resumes_path, params: {resume: {title: nil}}, headers: @auth_headers
+        @original_resume_count = Resume.count
+        post resumes_path, params: {resume: {title: ""}}, **@auth_headers
       end
+
       include_examples "response status", 422
 
-      it_behaves_like "error response"
+      include_examples "error response"
 
-      it "does not create a new resume" do
-        expect {
-          post resumes_path, params: {resume: {title: nil}}, headers: @auth_headers
-        }.not_to change { Resume.count }
+      it "should not create a new resume" do
+        expect(Resume.count).to eq @original_resume_count
       end
     end
   end
 
   describe "PUT/PATCH /update" do
-    before(:all) do
-      @new_resume = build(:resume)
-      @valid_params = {resume: @new_resume.attributes}
-      @invalid_params = {resume: {title: nil}}
-    end
-
     context "with valid params and when the resume exists" do
       before(:all) do
-        put resume_path(@resume), params: @valid_params, headers: @auth_headers
+        @resume = create :resume, user: @user
+        @new_resume = build(:resume)
+        put resume_path(@resume), params: {resume: @new_resume.attributes}, **@auth_headers
       end
 
       include_examples "response status", 200
 
-      context "response body" do
-        it_behaves_like("a resume") { let(:resume) { json_body["data"] } }
+      it "should return the updated resume" do
+        expect(json_body).to eq format_to_response(Resume.find(@resume.id))
       end
 
-      it "updates the resume" do
+      it "should update the resume" do
         updated_resume = Resume.find(@resume.id)
         expect(updated_resume.title).to eq @new_resume.title
         expect(updated_resume.headline).to eq @new_resume.headline
@@ -93,10 +89,12 @@ RSpec.describe "Resumes", type: :request do
 
     context "with invalid params" do
       before(:all) do
-        put resume_path(@resume), params: @invalid_params, headers: @auth_headers
+        @resume = create :resume, user: @user
+        put resume_path(@resume), params: {resume: {title: ""}}, **@auth_headers
       end
       include_examples "response status", 422
-      it_behaves_like "error response"
+
+      include_examples "error response"
 
       it "does not update the resume" do
         updated_resume = Resume.find(@resume.id)
@@ -106,28 +104,33 @@ RSpec.describe "Resumes", type: :request do
 
     context "when resume does not exist" do
       before(:all) do
-        put resume_path(build_stubbed(:resume)), params: @valid_params, headers: @auth_headers
+        put resume_path(build_stubbed(:resume)), params: {resume: build(:resume).attributes}, **@auth_headers
       end
       include_examples "response status", 404
-      it_behaves_like "error response"
+      include_examples "error response"
     end
   end
 
   describe "DELETE /destroy" do
     context "when the resume exists" do
       before :all do
-        delete resume_path(create(:resume)), headers: @auth_headers
+        @resume = create :resume, user: @user
+        delete resume_path(@resume), **@auth_headers
       end
+
       include_examples "response status", 200
-      it_behaves_like("a resume") { let(:resume) { json_body["data"] } }
+
+      it "should return the deleted resume" do
+        expect(json_body).to eq format_to_response(@resume)
+      end
     end
 
     context "when the resume does not exist" do
       before :all do
-        delete resume_path(build_stubbed(:resume)), headers: @auth_headers
+        delete resume_path(build_stubbed(:resume)), **@auth_headers
       end
       include_examples "response status", 404
-      it_behaves_like "error response"
+      include_examples "error response"
     end
   end
 end
