@@ -6,6 +6,7 @@ class User < ActiveRecord::Base
   include DeviseTokenAuth::Concerns::User
 
   has_many :jobs
+  has_many :resumes
   has_many :user_skills
   has_many :skills, through: :user_skills
 end

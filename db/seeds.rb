@@ -16,8 +16,6 @@ end
 
 3.times do
   FactoryBot.create :job, user: user
-end
-
-3.times do
   FactoryBot.create :user_skill, user: user
+  FactoryBot.create :resume, user: user
 end
