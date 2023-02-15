@@ -1,7 +1,8 @@
 FactoryBot.define do
   factory :user do
-    name { Faker::Name.name }
+    name { Faker::Lorem.characters }
     email { Faker::Internet.email name: name }
     password { "password" }
+    confirmed_at { Time.now }
   end
 end

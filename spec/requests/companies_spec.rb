@@ -1,85 +1,68 @@
 require "rails_helper"
 require "contexts/authenticate_user"
 require "examples/response_examples"
-require "examples/job_examples"
-
-RSpec.shared_examples "has the correct company attributes" do
-  it "has the correct company attributes" do
-    expect(company.keys).to include("id", "name")
-  end
-end
-
-RSpec.shared_examples "contains the related jobs" do
-  it "returns an array" do
-    expect(company["jobs"]).to be_an_instance_of(Array)
-  end
-  context "each element" do
-    include_examples "has the correct job attributes" do
-      let(:job) { company["jobs"][0] }
-    end
-  end
-end
 
 RSpec.describe "Companies", type: :request do
   include_context "sign in user"
 
-  before :all do
-    3.times { |n| create :company, name: "hello#{n}" }
-    3.times { |n| create :company, name: "hi#{n}" }
+  describe "GET /index" do
+    before :all do
+      3.times { create :company }
+      get companies_path, **@auth_headers
+    end
+
+    include_examples "response status", 200
+
+    it "should return all companies" do
+      expect(json_body).to eq format_to_response(Company.all)
+    end
   end
 
-  describe "GET /index" do
-    context "with no params" do
+  describe "GET /search" do
+    before :all do
+      3.times { create :company }
+      @search_params = {name_cont: "a"}
+      get companies_search_path, params: {q: @search_params}, **@auth_headers
+    end
+
+    include_examples "response status", 200
+
+    it "should return searched companies" do
+      expect(json_body).to eq format_to_response(Company.ransack(@search_params).result(distinct: true))
+    end
+  end
+
+  describe "POST /create" do
+    context "with valid params" do
       before :all do
-        get companies_path, headers: @auth_headers
+        @original_company_count = Company.count
+        post companies_path, params: {company: build(:company).attributes}, **@auth_headers
       end
 
       include_examples "response status", 200
 
-      it "returns an array" do
-        expect(json_body["data"]).to be_an_instance_of(Array)
+      it "should add a new company" do
+        expect(Company.count).to eq @original_company_count + 1
       end
 
-      context "each element" do
-        include_examples "has the correct company attributes" do
-          let(:company) { json_body["data"][0] }
-        end
+      it "should return the created company" do
+        expect(json_body).to eq format_to_response(Company.last)
       end
     end
 
-    context "with filter_by_name params" do
+    context "with invalid params" do
       before :all do
-        get companies_path, headers: @auth_headers, params: {filter_by_name: "hello"}
-      end
-      include_examples "response status", 200
-
-      it "returns an array" do
-        expect(json_body["data"]).to be_an_instance_of(Array)
+        @original_company_count = Company.count
+        post companies_path, params: {company: {name: ""}}, **@auth_headers
       end
 
-      it "filters companies by name" do
-        expect(json_body["data"].size).to eq 3
-      end
-    end
+      include_examples "response status", 422
 
-    context "with include_jobs params" do
-      before :all do
-        @company = Company.first
-        create :job, company: @company, user: @user
-        get companies_path, headers: @auth_headers, params: {include_jobs: "1"}
+      it "should not create a new company" do
+        expect(Company.count).to eq @original_company_count
       end
 
-      include_examples "response status", 200
-
-      it "returns an array" do
-        expect(json_body["data"]).to be_an_instance_of(Array)
-      end
-
-      context "each element" do
-        include_examples "contains the related jobs" do
-          let(:company) { json_body["data"].detect { |c| c["id"] == @company.id } }
-        end
-      end
+      include_examples "error response"
     end
   end
 end

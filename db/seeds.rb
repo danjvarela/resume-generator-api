@@ -6,13 +6,16 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-user = User.create email: "sample@email.com", password: "password"
-user.confirm
+user_email = "sample@email.com"
+user = User.find_by(email: user_email)
 
-3.times do
-  FactoryBot.create :job, user: user
+if user.blank?
+  user = User.create email: user_email, password: "password"
+  user.confirm
 end
 
 3.times do
+  FactoryBot.create :job, user: user
+  FactoryBot.create :user_skill, user: user
   FactoryBot.create :resume, user: user
 end

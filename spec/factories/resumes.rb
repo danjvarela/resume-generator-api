@@ -1,9 +1,6 @@
 FactoryBot.define do
-  sequence :resume_title do |rt|
-    "title#{rt}"
-  end
   factory :resume do
-    title { generate :resume_title }
+    title { Faker::Lorem.characters }
     headline { "MyString" }
     summary { "MyString" }
     user { association :user }

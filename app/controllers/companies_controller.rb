@@ -1,18 +1,28 @@
 class CompaniesController < ApplicationController
+  include Ransackable
   before_action :authenticate_user!
 
   def index
-    companies = if company_params[:filter_by_name].blank?
-      Company.all
+    render_success Company.all
+  end
+
+  def create
+    company = Company.create company_params
+
+    if company.persisted?
+      render_success company
     else
-      Company.filter_by_name(company_params[:filter_by_name])
+      render_errors company
     end
-    render json: companies, root: "data", **company_params
+  end
+
+  def search
+    render_success ransack(Company, params)
   end
 
   private
 
   def company_params
-    params.permit(:filter_by_name, :include_jobs)
+    params.require(:company).permit(:name)
   end
 end

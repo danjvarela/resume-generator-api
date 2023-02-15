@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :company do
+  factory :skill do
     name { Faker::Lorem.characters }
   end
 end
