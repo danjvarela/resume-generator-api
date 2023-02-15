@@ -21,16 +21,14 @@ RSpec.describe Job, type: :model do
   end
 
   it "should create company if no company with name=company_name exists" do
-    original_company_count = Company.count
-    job = create(:job, company: nil, company_name: generate(:company_name))
-    expect(job.persisted?).to eq true
-    expect(Company.count).to eq original_company_count + 1
+    expect do
+      create(:job, company: nil, company_name: generate(:company_name))
+    end.to change { Company.count }.by(1)
   end
 
   it "should ignore company_name if company or company_id is provided" do
     company_name = generate(:company_name)
-    job = create(:job, company_name: company_name)
-    expect(job.persisted?).to eq true
+    create(:job, company_name: company_name)
     expect(Company.find_by(name: company_name)).to be_nil
   end
 end

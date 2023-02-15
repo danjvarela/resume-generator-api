@@ -1,6 +1,6 @@
 class SkillsController < ApplicationController
   include RansackableController
-  
+
   before_action :authenticate_user!
 
   def index
