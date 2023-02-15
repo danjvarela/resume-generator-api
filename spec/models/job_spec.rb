@@ -28,7 +28,6 @@ RSpec.describe Job, type: :model do
   end
 
   it "should ignore company_name if company or company_id is provided" do
-    original_company_count = Company.count
     company_name = generate(:company_name)
     job = create(:job, company_name: company_name)
     expect(job.persisted?).to eq true
