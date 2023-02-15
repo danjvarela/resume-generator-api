@@ -1,10 +1,11 @@
 class SkillsController < ApplicationController
   include RansackableController
+  load_and_authorize_resource
 
   before_action :authenticate_user!
 
   def index
-    render_success(Skill.all)
+    render_success(@skills)
   end
 
   def search

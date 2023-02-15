@@ -1,9 +1,9 @@
 class ResumesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_resume, only: [:show, :update, :destroy]
+  load_and_authorize_resource
 
   def index
-    render json: current_user.resumes, root: "data"
+    render json: @resumes, root: "data"
   end
 
   def show
@@ -11,9 +11,7 @@ class ResumesController < ApplicationController
   end
 
   def create
-    @resume = Resume.create(resume_params)
-
-    if @resume.persisted?
+    if @resume.save
       render json: @resume, root: "data"
     else
       render_errors @resume
@@ -33,10 +31,6 @@ class ResumesController < ApplicationController
   end
 
   private
-
-  def set_resume
-    @resume = Resume.find(params[:id])
-  end
 
   def resume_params
     params.require(:resume).permit(:title, :headline, :summary).merge({user_id: current_user.id})

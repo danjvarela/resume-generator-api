@@ -19,15 +19,25 @@ RSpec.describe "Resumes", type: :request do
   end
 
   describe "GET /show" do
-    before(:all) do
-      @resume = create :resume, user: @user
-      get resume_path(@resume), **@auth_headers
+    context "when the resume belongs to the user" do
+      before(:all) do
+        @resume = create :resume, user: @user
+        get resume_path(@resume), **@auth_headers
+      end
+
+      include_examples "response status", 200
+
+      it "should return the resume" do
+        expect(json_body).to eq format_to_response(@resume)
+      end
     end
 
-    include_examples "response status", 200
-
-    it "should return the resume" do
-      expect(json_body).to eq format_to_response(@resume)
+    context "when the resume does not belong to the user" do
+      before(:all) do
+        get resume_path(create(:resume)), **@auth_headers
+      end
+      include_examples "error response"
+      include_examples "response status", 404
     end
   end
 
@@ -109,6 +119,14 @@ RSpec.describe "Resumes", type: :request do
       include_examples "response status", 404
       include_examples "error response"
     end
+
+    context "when the resume does not belong to the user" do
+      before(:all) do
+        put resume_path(create(:resume)), params: {resume: build(:resume).attributes}, **@auth_headers
+      end
+      include_examples "error response"
+      include_examples "response status", 404
+    end
   end
 
   describe "DELETE /destroy" do
@@ -131,6 +149,14 @@ RSpec.describe "Resumes", type: :request do
       end
       include_examples "response status", 404
       include_examples "error response"
+    end
+
+    context "when the resume does not belong to the user" do
+      before(:all) do
+        delete resume_path(create(:resume)), **@auth_headers
+      end
+      include_examples "error response"
+      include_examples "response status", 404
     end
   end
 end

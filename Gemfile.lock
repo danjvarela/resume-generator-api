@@ -78,6 +78,7 @@ GEM
     bundler-audit (0.9.1)
       bundler (>= 1.2.0, < 3)
       thor (~> 1.0)
+    cancancan (3.4.0)
     case_transform (0.2)
       activesupport
     concurrent-ruby (1.2.0)
@@ -259,6 +260,7 @@ DEPENDENCIES
   active_model_serializers (~> 0.10.0)
   brakeman
   bundler-audit
+  cancancan
   database_cleaner-active_record
   debug
   devise

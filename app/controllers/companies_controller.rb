@@ -1,28 +1,13 @@
 class CompaniesController < ApplicationController
   include RansackableController
   before_action :authenticate_user!
+  load_and_authorize_resource
 
   def index
-    render_success Company.all
-  end
-
-  def create
-    company = Company.create company_params
-
-    if company.persisted?
-      render_success company
-    else
-      render_errors company
-    end
+    render_success @companies
   end
 
   def search
     render_success ransack
-  end
-
-  private
-
-  def company_params
-    params.require(:company).permit(:name)
   end
 end
