@@ -19,15 +19,25 @@ RSpec.describe "UserSkills", type: :request do
   end
 
   describe "GET /show" do
-    before(:all) do
-      @user_skill = create :user_skill, user: @user
-      get user_skill_path(@user_skill), **@auth_headers
+    context "when the user_skill belongs to the user" do
+      before(:all) do
+        @user_skill = create :user_skill, user: @user
+        get user_skill_path(@user_skill), **@auth_headers
+      end
+
+      include_examples "response status", 200
+
+      it "should return the user_skill" do
+        expect(json_body).to eq format_to_response(@user_skill)
+      end
     end
 
-    include_examples "response status", 200
-
-    it "should return the user_skill" do
-      expect(json_body).to eq format_to_response(@user_skill)
+    context "when the user_skill does not belong to the user" do
+      before :all do
+        get user_skill_path(create(:user_skill)), **@auth_headers
+      end
+      include_examples "error response"
+      include_examples "response status", 404
     end
   end
 
@@ -85,6 +95,14 @@ RSpec.describe "UserSkills", type: :request do
       end
       include_examples "response status", 404
       include_examples "error response"
+    end
+
+    context "when the user_skill does not belong to the user" do
+      before :all do
+        delete user_skill_path(create(:user_skill)), **@auth_headers
+      end
+      include_examples "error response"
+      include_examples "response status", 404
     end
   end
 end

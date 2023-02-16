@@ -5,8 +5,8 @@ class User < ActiveRecord::Base
     :recoverable, :rememberable, :validatable, :confirmable
   include DeviseTokenAuth::Concerns::User
 
-  has_many :jobs
-  has_many :resumes
-  has_many :user_skills
+  has_many :jobs, dependent: :destroy
+  has_many :resumes, dependent: :destroy
+  has_many :user_skills, dependent: :destroy
   has_many :skills, through: :user_skills
 end

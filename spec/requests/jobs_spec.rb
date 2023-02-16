@@ -19,15 +19,23 @@ RSpec.describe "Jobs", type: :request do
   end
 
   describe "GET /show" do
-    before(:all) do
-      @job = create :job, user: @user
-      get job_path(@job), **@auth_headers
+    context "when job is belongs to the user" do
+      before(:all) do
+        @job = create :job, user: @user
+        get job_path(@job), **@auth_headers
+      end
+
+      include_examples "response status", 200
+
+      it "should return the job" do
+        expect(json_body).to eq format_to_response(@job)
+      end
     end
 
-    include_examples "response status", 200
-
-    it "should return the job" do
-      expect(json_body).to eq format_to_response(@job)
+    context "when job does not belong the user" do
+      before(:all) { get job_path(create(:job)), **@auth_headers }
+      include_examples "error response"
+      include_examples "response status", 404
     end
   end
 
@@ -112,6 +120,12 @@ RSpec.describe "Jobs", type: :request do
       include_examples "response status", 404
       include_examples "error response"
     end
+
+    context "when the job does not belong to the user" do
+      before(:all) { put job_path(create(:job)), params: {job: build(:job).attributes}, **@auth_headers }
+      include_examples "response status", 404
+      include_examples "error response"
+    end
   end
 
   describe "DELETE /destroy" do
@@ -131,6 +145,14 @@ RSpec.describe "Jobs", type: :request do
     context "when the job does not exist" do
       before :all do
         delete job_path(build_stubbed(:job)), **@auth_headers
+      end
+      include_examples "response status", 404
+      include_examples "error response"
+    end
+
+    context "when the job does not belong to the user" do
+      before :all do
+        delete job_path(create(:job)), **@auth_headers
       end
       include_examples "response status", 404
       include_examples "error response"

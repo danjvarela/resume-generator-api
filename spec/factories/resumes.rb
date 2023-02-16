@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :resume do
-    title { Faker::Lorem.characters }
-    headline { "MyString" }
-    summary { "MyString" }
+    title { generate :resume_title }
+    headline { "Some Headline" }
+    summary { "Some Summary" }
     user { association :user }
   end
 end
