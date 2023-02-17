@@ -4,7 +4,8 @@ module ResponseHelpers
   end
 
   def format_to_response(resource, opts = {})
-    opts[:each_serializer] = SkillSerializer if resource.is_a? Array
+    serializer = "#{resource.class.to_s}Serializer".safe_constantize
+    opts[:each_serializer] = serializer if resource.is_a? Array
     opts[:root] ||= "data"
     JSON.parse(
       ActiveModelSerializers::SerializableResource.new(resource, opts).to_json
