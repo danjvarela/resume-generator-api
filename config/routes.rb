@@ -12,6 +12,11 @@ Rails.application.routes.draw do
 
     resources :resumes, except: [:edit, :new]
 
+    resources :educations, except: [:edit, :new]
+
+    resources :schools, only: [:index]
+    get "/schools/search", to: "schools#search", as: "schools_search"
+
     mount_devise_token_auth_for "User", at: "auth"
   end
 end

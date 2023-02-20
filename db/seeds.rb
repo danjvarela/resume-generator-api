@@ -18,4 +18,5 @@ end
   FactoryBot.create :job, user: user
   FactoryBot.create :user_skill, user: user
   FactoryBot.create :resume, user: user
+  FactoryBot.create :education, user: user
 end
