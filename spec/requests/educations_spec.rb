@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 require "contexts/authenticate_user"
 require "examples/response_examples"
 

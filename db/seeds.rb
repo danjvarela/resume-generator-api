@@ -20,4 +20,3 @@ end
   FactoryBot.create :resume, user: user
   FactoryBot.create :education, user: user
 end
-

@@ -4,7 +4,7 @@ module ResponseHelpers
   end
 
   def format_to_response(resource, opts = {})
-    serializer = "#{resource.class.to_s}Serializer".safe_constantize
+    serializer = "#{resource.class}Serializer".safe_constantize
     opts[:each_serializer] = serializer if resource.is_a? Array
     opts[:root] ||= "data"
     JSON.parse(

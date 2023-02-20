@@ -12,7 +12,6 @@ class School < ApplicationRecord
   private
 
   def capitalize_name
-    self.name.capitalize!
+    name.capitalize!
   end
-
 end
