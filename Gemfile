@@ -9,6 +9,8 @@ gem "rails", "~> 7.0.4", ">= 7.0.4.2"
 # Use Postgresql for database
 gem "pg"
 
+gem "redis"
+
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 5.0"
 
