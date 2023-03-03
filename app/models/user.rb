@@ -5,6 +5,9 @@ class User < ActiveRecord::Base
     :recoverable, :rememberable, :validatable, :confirmable
   include DeviseTokenAuth::Concerns::User
 
+  validates :address, presence: true
+  validates :phone_number, presence: true
+
   has_many :jobs, dependent: :destroy
   has_many :resumes, dependent: :destroy
   has_many :user_skills, dependent: :destroy
