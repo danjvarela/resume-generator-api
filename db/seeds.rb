@@ -10,7 +10,10 @@ user_email = "sample@email.com"
 user = User.find_by(email: user_email)
 
 if user.blank?
-  user = User.create email: user_email, password: "password"
+  user = User.create email: user_email,
+    password: "password",
+    address: Faker::Address.full_address,
+    phone_number: Faker::PhoneNumber.cell_phone
   user.confirm
 end
 
