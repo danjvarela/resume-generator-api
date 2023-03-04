@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  mount ActionCable.server => "/cable"
-
   scope :v1 do
     resources :jobs, except: [:edit, :new]
 
